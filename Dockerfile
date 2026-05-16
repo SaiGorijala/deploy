@@ -25,8 +25,14 @@ RUN curl -o /tmp/sonar-scanner.zip https://binaries.sonarsource.com/Distribution
     && ln -s /opt/sonar-scanner-5.0.1.3006-linux/bin/sonar-scanner /usr/local/bin/sonar-scanner
 
 # Install Trivy (vulnerability scanner)
-RUN curl -fsSL https://aquasecurity.github.io/trivy-repo/deb/public.key | apt-key add - \
-    && echo "deb https://aquasecurity.github.io/trivy-repo/deb $(lsb_release -sc) main" | tee /etc/apt/sources.list.d/trivy.list \
+# Use modern keyring method instead of deprecated `apt-key` to avoid command-not-found errors
+RUN apt-get update && apt-get install -y \
+    gnupg \
+    wget \
+    lsb-release \
+    ca-certificates \
+    && curl -fsSL https://aquasecurity.github.io/trivy-repo/deb/public.key | gpg --dearmor -o /usr/share/keyrings/trivy-archive-keyring.gpg \
+    && echo "deb [signed-by=/usr/share/keyrings/trivy-archive-keyring.gpg] https://aquasecurity.github.io/trivy-repo/deb $(lsb_release -sc) main" | tee /etc/apt/sources.list.d/trivy.list \
     && apt-get update && apt-get install -y trivy \
     && rm -rf /var/lib/apt/lists/*
 
