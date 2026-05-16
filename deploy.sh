@@ -43,7 +43,25 @@ fi
 if [ -n "${GIT_URL}" ]; then
   if [ -d "${REPO_DIR}/.git" ]; then
     echo "Updating repository in ${REPO_DIR}"
-    git -C "${REPO_DIR}" pull --rebase
+    # If there are local changes, stash them to allow pull --rebase to succeed
+    STASHED=0
+    if [ -n "$(git -C "${REPO_DIR}" status --porcelain)" ]; then
+      echo "Local changes detected in ${REPO_DIR}, stashing before pull..."
+      git -C "${REPO_DIR}" stash push -u -m "autostash-$(date +%s)" >/dev/null && STASHED=1 || STASHED=0
+    fi
+
+    if ! git -C "${REPO_DIR}" pull --rebase; then
+      echo "git pull --rebase failed. Attempting a normal pull..."
+      git -C "${REPO_DIR}" pull || true
+    fi
+
+    # Try to pop the stash if we stashed earlier
+    if [ "${STASHED}" -eq 1 ]; then
+      echo "Restoring stashed changes..."
+      if ! git -C "${REPO_DIR}" stash pop; then
+        echo "Warning: stash pop reported conflicts or failed. Stash still available in the repo."
+      fi
+    fi
   else
     echo "Cloning ${GIT_URL} into ${REPO_DIR}"
     rm -rf "${REPO_DIR}"
