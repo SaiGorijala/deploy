@@ -8,6 +8,10 @@ RUN apt-get update && apt-get install -y \
     git \
     curl \
     openssh-client \
+    unzip \
+    lsb-release \
+    gnupg \
+    ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 
 # Install SonarQube Scanner
