@@ -1,0 +1,68 @@
+version: '3.8'
+
+services:
+  # FastAPI Application
+  devops-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      - DEBUG=true
+      - LOG_LEVEL=INFO
+      - OLLAMA_ENDPOINT=http://host.docker.internal:11434
+      - WORKSPACE_ROOT=/tmp/devops_pipeline
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./workspace:/tmp/devops_pipeline
+    networks:
+      - devops-network
+    depends_on:
+      - sonarqube
+    command: uvicorn app:app --host 0.0.0.0 --port 8000 --reload
+
+  # SonarQube for Code Quality
+  sonarqube:
+    image: sonarqube:latest
+    ports:
+      - "9000:9000"
+    environment:
+      - SONARQUBE_JDBC_URL=jdbc:postgresql://postgres:5432/sonarqube
+      - SONARQUBE_JDBC_USERNAME=sonar
+      - SONARQUBE_JDBC_PASSWORD=sonar
+    depends_on:
+      - postgres
+    networks:
+      - devops-network
+    volumes:
+      - sonarqube_data:/opt/sonarqube/data
+      - sonarqube_logs:/opt/sonarqube/logs
+      - sonarqube_extensions:/opt/sonarqube/extensions
+
+  # PostgreSQL for SonarQube
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      - POSTGRES_DB=sonarqube
+      - POSTGRES_USER=sonar
+      - POSTGRES_PASSWORD=sonar
+    networks:
+      - devops-network
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  # Ollama (Local Machine - Not in Docker)
+  # For local development, run Ollama separately on your machine:
+  # ollama serve
+  # Then use SSH reverse tunnel to expose it to the container
+
+networks:
+  devops-network:
+    driver: bridge
+
+volumes:
+  sonarqube_data:
+  sonarqube_logs:
+  sonarqube_extensions:
+  postgres_data:

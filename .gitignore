@@ -1,0 +1,126 @@
+# Environment Variables
+.env
+.env.local
+.env.*.local
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual Environments
+venv/
+ENV/
+env/
+.venv
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+*.sublime-project
+*.sublime-workspace
+
+# Temporary Files
+*.tmp
+*.temp
+*.bak
+*.backup
+*~
+
+# Logs
+*.log
+logs/
+app.log
+
+# Workspace
+/workspace/
+/tmp/
+/devops_pipeline/
+
+# Node modules (for React dashboard)
+node_modules/
+npm-debug.log
+yarn-error.log
+yarn-debug.log
+
+# Build outputs
+dist/
+build/
+out/
+
+# Docker
+.dockerignore
+
+# SSH Keys
+*.pem
+*.key
+*.pub
+*.ppk
+!example.pem.txt
+
+# Credentials
+credentials.json
+secrets.json
+.credentials
+
+# Test coverage
+.coverage
+htmlcov/
+
+# OS
+.DS_Store
+Thumbs.db
+.directory
+
+# IDE & Editor
+.vscode/
+.idea/
+*.iml
+.sublime-*
+
+# TypeScript
+*.tsbuildinfo
+dist/
+
+# Package managers
+package-lock.json
+yarn.lock
+poetry.lock
+
+# Cache
+.cache/
+.pytest_cache/
+.mypy_cache/
+.tox/
+
+# Local development
+local_config/
+dev_notes.md
+
+# CI/CD artifacts
+.github/workflows/*.log
+.gitlab-ci/*.log
